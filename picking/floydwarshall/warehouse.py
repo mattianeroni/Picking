@@ -1,7 +1,3 @@
-from __future__ import annotations
-
-from typing import Dict, Tuple, List, Union, Optional
-
 import collections
 import numpy #type: ignore
 
@@ -18,7 +14,7 @@ Node = collections.namedtuple ("Node", "x y")
 
 
 
-def _euclidean (n : Node, m : Node) -> int:
+def _euclidean (n, m):
     """
     This method returns the euclidean distance between 2 nodes.
 
@@ -28,11 +24,6 @@ def _euclidean (n : Node, m : Node) -> int:
 
     """
     return int(((n.x - m.x)**2 + (n.y - m.y)**2)**0.5)
-
-
-
-
-
 
 
 
@@ -50,23 +41,21 @@ class Warehouse (object):
     """
  
     def __init__(self,
-                blocks : int,
-                racks_per_block : int,
-                locations_per_side : int,
-                locations_size : Tuple[int,int],
-                aisles_size : int,
-                crossaisles_size : int
-
-                ) -> None:
+                blocks,
+                racks_per_block,
+                locations_per_side,
+                locations_size,
+                aisles_size,
+                crossaisles_size):
         """
         Initialize.
 
-        :param blocks: The number of blocks divided by a cross aisle.
-        :param racks_per_block: The number of racks in each block.
-        :param locations_per_side: The number of storage locations facing on each aisle in each rack.
-        :param locations_size: The x and y size of the locations.
-        :param aisles_size: The width of the aisles.
-        :param crossaisles_size: The width of the cross asisles.
+        :param blocks: <int> The number of blocks divided by a cross aisle.
+        :param racks_per_block: <int> The number of racks in each block.
+        :param locations_per_side: <int> The number of storage locations facing on each aisle in each rack.
+        :param locations_size: <tuple[int,int]> The x and y size of the locations.
+        :param aisles_size: <int> The width of the aisles.
+        :param crossaisles_size: <int> The width of the cross asisles.
 
         """
         self.blocks = blocks
@@ -104,9 +93,9 @@ class Warehouse (object):
             x_coordinates[index] = i * (aisles_size + locations_size[0] * 2)
             index += 1
 
-        self.nodes : Dict[int, Dict[int, Node]] = { i : {j : Node (x, y) for j, y in enumerate(y_coordinates)} for i, x in enumerate(x_coordinates)}
+        self.nodes = { i : {j : Node (x, y) for j, y in enumerate(y_coordinates)} for i, x in enumerate(x_coordinates)}
 
-        self.graph : Dict[int, Dict[int, int]] = {}
+        self.graph = {}
         
         node_id : int = 0
         for x, dic in self.nodes.items():
