@@ -1,10 +1,4 @@
-from __future__ import annotations
-
-from typing import Tuple, Dict, List, Set, cast
-
-
-
-def floyd_warshall (graph : Dict[int,Dict[int,int]]) -> Tuple[Dict[int,Dict[int,int]], Dict[int,Dict[int,Set[int]]]]:
+def floyd_warshall (graph):
     """
     This method represents the Floyd Warshall algorithm.
 
@@ -28,8 +22,8 @@ def floyd_warshall (graph : Dict[int,Dict[int,int]]) -> Tuple[Dict[int,Dict[int,
             between.
 
     """
-    distances : Dict[int,Dict[int,int]] = {}
-    paths : Dict[int,Dict[int, Set[int]]] = {}
+    distances = {}
+    paths = {}
 
     for u in graph:
         distances[u] = {}
