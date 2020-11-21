@@ -55,7 +55,7 @@ def prepare_test (X, y, test_size = 0.3):
             data_train.append (data)
             y_train.append (answer)
 
-    return data_test, data_train, y_test, y_train
+    return numpy.array(data_test), numpy.array(data_train), numpy.array(y_test), numpy.array(y_train)
 
 
 
@@ -101,7 +101,7 @@ class LogisticRegression:
         :param weights: <array> Array of weights in the respective entering edges.
         :return: <float> The prediction of the regression.
         """
-        z = numpy.matmul(numpy.transpose(x), weights)
+        z = numpy.dot(x, weights)
         return 1 / (1 + numpy.exp(-z))
 
 
@@ -135,7 +135,7 @@ class LogisticRegression:
         :return: <list> The array of the predictions
         
         """
-        return 1 / (1 + numpy.exp(- numpy.matmul (weights, X)))
+        return 1 / (1 + numpy.exp(- numpy.dot (weights, X.T)))
     
     
     
@@ -145,7 +145,7 @@ class LogisticRegression:
 
 
     @staticmethod
-    def _get_loss (predictions, results):
+    def _get_loss (h, y):
         """
         Once a prediction has been made, this method evaluates its quality.
         Several different indexes might be used to evaluate the prediction, but in this 
@@ -160,8 +160,6 @@ class LogisticRegression:
             1) -log(h),     if y = 1
             2) -log(1 - h), if y = 0
         """
-        h = numpy.asarray(predictions)
-        y = numpy.asarray(results)
         return (-y * numpy.log(h + 1e-5) - (1 - y) * numpy.log(1 - h + 1e-5)).mean()
 
 
@@ -179,8 +177,8 @@ class LogisticRegression:
         :param results: The array of the results the prediction was supposed to provide.
         :result: The intensity and the directions according to which each weight is going to be changed.
         """
-        errors_with_sign = numpy.asarray(predictions) - numpy.asarray(results)
-        return numpy.matmul(numpy.transpose(X), errors_with_sign) / len(results)
+        errors_with_sign = predictions - results
+        return numpy.dot(numpy.transpose(X), errors_with_sign) / len(results)
 
 
 
@@ -214,7 +212,7 @@ class LogisticRegression:
         :param y: The expected predictions.
         """
         history = array.array('d',[0.0 for _ in range(self.num_iter // 1000)])
-        self.weights = np.random.rand(len(X[0]) + 1)
+        self.weights = numpy.random.rand(len(X[0]) + 1)
         X = self._add_intercept (X)
 
         for i in range(self.num_iter):
@@ -223,7 +221,7 @@ class LogisticRegression:
             self.weights = numpy.asarray(self.weights) - self.lr * gradient
 
             if i % 1000 == 0:
-                history[i // 1000] = self._get_loss(h, y))
+                history[i // 1000] = self._get_loss(h, y)
                 
         if self.verbose is True:
             plt.plot(history)
