@@ -168,17 +168,17 @@ class LogisticRegression:
 
 
     @staticmethod
-    def _get_gradient (X, predictions, results):
+    def _get_gradient (X, h, y):
         """
         This method calculates the gradient, which is the partial derivative of the 
         of the total error made by the prediction.
         :param X: The matrix of the input data.
-        :param predictions: The array of the predictions made.
-        :param results: The array of the results the prediction was supposed to provide.
+        :param h: The array of the predictions made.
+        :param y: The array of the results the prediction was supposed to provide.
         :result: The intensity and the directions according to which each weight is going to be changed.
         """
-        errors_with_sign = predictions - results
-        return numpy.dot(numpy.transpose(X), errors_with_sign) / len(results)
+        errors_with_sign = h - y
+        return numpy.dot(numpy.transpose(X), errors_with_sign) / len(y)
 
 
 
@@ -220,8 +220,10 @@ class LogisticRegression:
             gradient = self._get_gradient (X, h, y)
             self.weights = numpy.asarray(self.weights) - self.lr * gradient
 
-            if i % 1000 == 0:
-                history[i // 1000] = self._get_loss(h, y)
+            if self.verbose is True and i % 1000 == 0:
+                loss = self._get_loss(h, y)
+                print (f"Iteration {i} -> Loss {loss}")
+                history[i // 1000] = loss
                 
         if self.verbose is True:
             plt.plot(history)
