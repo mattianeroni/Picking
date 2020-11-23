@@ -1,8 +1,10 @@
 /*
 Simjs is a simulation library, maybe not the best, maybe not the most popular, maybe 
 not the most performant, but it is a simulation library.
-For the moment it has no graphical support, but it is supposed to work.
+For the moment it has no graphical support, but it is supposed to work, and, one day, 
+maybe it will have.
 
+Written by Mattia Neroni 2019.
 
 */
 
@@ -34,7 +36,19 @@ class Event {
 
 
 class Timeout extends Event {
+	// The timeout is an event which does not trigger any other event.
+	// It just cause a delay in the simulation clock.
+	
 	constructor (env, delay){
+		// Initialize.
+		// :param env: The Environmant it belongs to
+		// :param delay: The delay it generates in the simulation clock of
+		//               the Environment.
+		// Once generated, it schedule itself in the list of events of the 
+		// Environment (this is in my opinion very twisted, but in the Simpy
+		// code it is made like this, and I wanted to keep it).
+		// Since the Timeout is an Event, and the Events require a generator,
+		// the generator of the Timeout is a function that does nothing.		
 		super(
 			env,
 			delay,
@@ -44,11 +58,29 @@ class Timeout extends Event {
 	}
 }
 
+
+
+
+
+
+
+
 class Process extends Event {
+	// The Process is the most powerfull Event.
+	// Its generator is a process in the simulation, and it can do things
+	// and trigger other processes as well.
+	
 	constructor (env, generator) {
+		// Initialize.
+		// :param env: The Environment the Process belongs to.
+		// :param generator: The simulation process.
+		// Once generated, it schedule itself in the list of events of the 
+		// Environment (this is in my opinion very twisted, but in the Simpy
+		// code it is made like this, and I wanted to keep it).
 		super(env, 0, generator);
 		env.schedule(this);
 	}
+	
 
 	resume () {
 		let resp = this.generator.next();
@@ -100,6 +132,8 @@ class Environment {
 	}
 
 	timeout(delay) {
+		// This method generates a Timeout and return it to the user.
+		// :param delay: The delay of the timeout.
 		return new Timeout(this, delay);
 	}
 
