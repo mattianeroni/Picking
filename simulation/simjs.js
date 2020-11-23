@@ -1,11 +1,36 @@
+/*
+Simjs is a simulation library, maybe not the best, maybe not the most popular, maybe 
+not the most performant, but it is a simulation library.
+For the moment it has no graphical support, but it is supposed to work.
+
+
+*/
+
+
+
+
 class Event {
+	// Everything happening in the simulation can be represented as an Event
 	constructor (env, delay=0, generator=null) {
+		// Initialize.
+		// :param env: The Environment the Event belongs to
+		// :param delay: The duration of the event and the delay it generates 
+		//               in the Environment simulation clock.
+		// :param generator: The generator (i.e. process of the simulation triggered by the
+		//                   event when it takes place.
+		// :attr callbacks: The list of callbacks. The callbacks are generators (i.e. processes)
+		//                  that restart once the current process is concluded.
 		this.env = env;
 		this.delay = delay;
 		this.generator = generator;
 		this.callbacks = [];
 	}
 }
+
+
+
+
+
 
 
 class Timeout extends Event {
@@ -121,6 +146,10 @@ class Environment {
 }
 
 
+
+// Export the Environment and the Resource
+// For safety reasons other elements are not exported, but
+// they can be created intervening on the Environment
 module.exports = {
 	Environment : Environment,
 	Resource : Resource
