@@ -83,7 +83,14 @@ class Process extends Event {
 	
 
 	resume () {
+		// Every time a process is resumed it does a step.
+		// and the step is made calling the next() function of its generator.
 		let resp = this.generator.next();
+		
+		// Once step-by-step the things the process can do are
+		// finished, its callbacks are triggered.
+		// Otherwise, the current process in included in the callbacks 
+		// of the process that stops it.
 		if (resp.done) {
 			if (this.callbacks.length > 0) {
 				this.callbacks.forEach(i=>i.resume());
@@ -94,30 +101,75 @@ class Process extends Event {
 	}
 }
 
+
+
+
 class Request extends Event {
+	// A request is an event that is automatically triggered
+	// when the interested resource takes care of it and release it.
 	constructor(env, resource) {
+		// Initialize.
+		// :param env: The Environment
+		// :param resource: The resource required.
+		//
+		// As for the timeout it is initialised as an Event which does
+		// nothig.
+		// However, it is not scheduled until the resource release it.
 		super(env, 0, (function* () {})());
 		this.resource = resource;
 	}
 
 	release () {
+		// When the request is released an event is scheduled in the Environment.
+		// Until that moment the request is pending, and only the interested resource 
+		// knows about it.
+		// Once released it is also removed by the queue of the resource.
 		this.resource.queue.splice(this.resource.queue.indexOf(this), 1);
 		this.env.schedule(this);
 	}
 }
 
+
+
+
+
 function Resource (env, capacity=1) {
+	// The resource represent a resource in the simulation
+	// e.g. machine, person, employee, computer, consumable, and so on.
+	//
+	//Initialize.
+	// :param env: The Environment.
+	// :param capacity: The number of request the resource 
+	//                  can handle at the same time.
+	// :attr queue: The queue of requests.
 	this.env = env;
 	this.capacity = capacity;
 	this.queue = [];
 
+	
 	this.request = function () {
+		// When the Resource is required, a request is generated
+		// and appended to the queue of requests.
+		// The request is also returned to the user so that he/she
+		// can handle it (and require it release!).
 		let req = new Request(this.env, this);
 		this.queue.push(req);
 		return req;
 	}
 
+	
 	this.release = function (req) {
+		// A Resource can also be used to release a request.
+		// But, in this case, the request must be provided.
+		// A faster method to do this (which does not exist in SimPy)
+		// has been appended, giving the method 'release' directly to the 
+		// Request class.
+		//
+		// When a request is released, it is appended to the list of events of
+		// the Environment, because that is the real instant when the Event (i.e. 
+		// Request) is triggered.
+		//
+		// :param req: The request to release.
 		this.queue.splice(this.queue.indexOf(req), 1);
 		this.env.schedule(req);
 	}
@@ -126,20 +178,44 @@ function Resource (env, capacity=1) {
 
 
 class Environment {
+	// This is the main class of the library, and it handles
+	// all the events and all the simulation.
+	
+	/*
+	A QUICK OVERVIEW OF HOW THE ENVIRONMENT WORKS
+	
+	While the user calls
+	
+	
+	
+	*/
+	
 	constructor() {
+		// Initialize.
+		// :attr now: The current simulation time.
+		// :attr queue: The queue of events.
 		this.now = 0;
 		this.queue = [];
 	}
 
+	
+	
 	timeout(delay) {
 		// This method generates a Timeout and return it to the user.
 		// :param delay: The delay of the timeout.
 		return new Timeout(this, delay);
 	}
+	
+	
 
 	process (generator) {
+		// This method generates a Process and returns it to the user.
+		// :param generator: The generator function that represents the 
+		//                   process.
 		return new Process(this, generator);
 	}
+	
+	
 
 	step () {
 		this.now = this.queue[0][0];
@@ -154,12 +230,20 @@ class Environment {
 		}
 		this.queue.splice(this.queue[0], 1);
 	}
+	
+	
 
 	run () {
+		// This is the main procedure of the Environment.
+		// One-by-one all the steps are executed until the simulation is
+		// concluded.
 		while (this.queue.length > 0) {
 			this.step();
 		}
 	}
+	
+	
+	
 
 	schedule (event, priority=1, delay=0) {
 		if (this.queue.length == 0) {
