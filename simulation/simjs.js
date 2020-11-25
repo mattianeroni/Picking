@@ -184,9 +184,14 @@ class Environment {
 	/*
 	A QUICK OVERVIEW OF HOW THE ENVIRONMENT WORKS
 	
-	While the user calls
+	While the user calls new timeouts, processes and requests, nothing happens
+	inside the Environment.
+	The only method called is the 'schedule', which just organize and schedule
+	all the events and their callbacks.
 	
-	
+	Once the creation of events is concluded, the user is required to call
+	the method 'run' to execute the simulation. And it is at that time that 
+	the Environment starts triggering all the events and the simulation is computed.
 	
 	*/
 	
@@ -218,6 +223,12 @@ class Environment {
 	
 
 	step () {
+		// This method trggers the first event in queue.
+		// It sets the clock time equal to that one desired by
+		// the event.
+		// If the event is conclued all its callbacks are called
+		// and triggered.
+		// Then the event is removed from the queue.
 		this.now = this.queue[0][0];
 		let event = this.queue[0][2];
 		let resp = event.generator.next();
@@ -246,6 +257,14 @@ class Environment {
 	
 
 	schedule (event, priority=1, delay=0) {
+		// This is the method that schedule the Events which are taking
+		// place during the simulation.
+		//
+		// :param event: The event to schedule.
+		// :param priority: The priority idex assigned to that event.
+		//                  Lower is the priority value, the greater is 
+		//                  the priority given to the event.
+		// :param delay: The delay that event cause to the Environment clock.
 		if (this.queue.length == 0) {
 			this.queue.push([this.now + delay, priority, event])
 		} else {
@@ -262,6 +281,8 @@ class Environment {
 		}
 	}
 }
+
+
 
 
 
