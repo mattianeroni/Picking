@@ -1,5 +1,4 @@
 import numpy as np
-import itertools
 
 def fast_floyd_warshall (A):
   """
@@ -17,6 +16,12 @@ def fast_floyd_warshall (A):
   
   
 if __name__ == '__main__':
+  import itertools
+  
   A = np.random.random_integers(1, 30, (4,4))
+  
+  for i, j in itertools.product(range(n), repeat = 2):
+    A[i][j] = A[j][i]
+    
   print("Matrix: ", A)
   print("After algorithm :", fast_floyd_warshall(A))
