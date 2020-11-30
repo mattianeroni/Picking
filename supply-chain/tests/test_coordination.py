@@ -1,5 +1,5 @@
-from supply_chain import Agent, Mediator  # !!! This is not working, the current file must be taken outside
-                                          # the supply-chain folder.
+from coordination import Agent, Mediator  # !!! This is not working, the current file must be taken outside
+                                          # the tests folder.
 
 if __name__ == '__main__':
     agent1 = Agent(lambda x: 1/4 * x**2, Ti=1000, alpha=0.996)
