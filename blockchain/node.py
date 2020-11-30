@@ -34,6 +34,9 @@ node_identifier : str = str(uuid.uuid4()).replace('-', '')
 
 @app.route('/init', methods=['GET'])
 def init ():
+	"""
+	Initialize the functioning of the node.
+	"""
 	session['blockchain'] = Blockchain()
 	return flask.jsonify({
             	'message': 'The current chain of this node',
