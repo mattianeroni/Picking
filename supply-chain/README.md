@@ -8,8 +8,8 @@ is presented, in order to make clear the concept.
 
 
 A test relative to the same solution is presented in the tests folder into the file 'test_coordination.py'.
-I'm aware that the example presented concerns a very easy problem where the agents have to minimize a convex function, i.e.
-Figure 1: OF for Agent1 and Figure2: OF for Agent2. 
+I'm aware that the example presented concerns a very easy problem where the agents have to minimize a convex function (i.e.
+Figure 1 - OF for Agent1 and Figure2 - OF for Agent2). 
 
 ##### Figure 1
 ![alt text](https://github.com/mattianeroni/industry-algorithms/supply-chain/im1.png)
