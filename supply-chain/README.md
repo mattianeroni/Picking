@@ -12,10 +12,10 @@ I'm aware that the example presented concerns a very easy problem where the agen
 Figure 1 - OF for Agent1 and Figure2 - OF for Agent2). 
 
 ##### Figure 1
-![alt text](https://github.com/mattianeroni/industry-algorithms//blob/main/supply-chain/im1.png)
+![alt text](https://github.com/mattianeroni/industry-algorithms/blob/main/supply-chain/im1.png)
 
 ##### Figure 2
-![alt text](https://github.com/mattianeroni/industry-algorithms//blob/main/supply-chain/im2.png)
+![alt text](https://github.com/mattianeroni/industry-algorithms/blob/main/supply-chain/im2.png)
 
 
 The idea is just to provide an example reimplementable and equally good in many ither situation (see for instance Fink (2004),
