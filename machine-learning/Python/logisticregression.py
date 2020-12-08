@@ -101,7 +101,7 @@ class LogisticRegression:
         :param weights: <array> Array of weights in the respective entering edges.
         :return: <float> The prediction of the regression.
         """
-        z = numpy.dot(x, weights)
+        z = numpy.sum(numpy.dot(x, weights))
         return 1 / (1 + numpy.exp(-z))
 
 
