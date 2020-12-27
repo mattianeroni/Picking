@@ -1,3 +1,11 @@
+/*
+
+In this example a set of comparisons of the Ant Colony Optimization algorithm with 
+a Greedy algorithm is presented.
+
+
+*/
+
 #include <iostream>
 #include <array>
 #include <stdlib.h>
