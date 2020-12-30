@@ -1,8 +1,6 @@
 
 #include <iostream>
-#include "problem.h"
-#include "aco.h"
-
 int main() {
+    std::cout << "Hello!\n";
     return 0;
 }
