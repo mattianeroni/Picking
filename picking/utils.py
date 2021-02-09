@@ -1,3 +1,10 @@
+# The class Race written in this file can be used 
+# for parallel computing, testing different algorithms
+# at the same time.
+#
+#
+#
+
 from multiprocessing import Pool
 
 import random
