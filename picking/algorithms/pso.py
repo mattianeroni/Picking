@@ -403,7 +403,8 @@ class Particle (object):
                     
 class Mattia_PSO:
     """
-    An instance of this class represents the Particle Swarm Optimization designed by Mattia in December 2019.
+    An instance of this class represents the Particle Swarm Optimization published by Neroni, Mezzogori,
+    Zammori in 2021.
 
     An Hibrid PSO for TSP
     Solution is generated node by node
