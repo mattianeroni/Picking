@@ -268,16 +268,11 @@ class Particle (object):
             
             edge = (x[edge_indexes[0]], x[edge_indexes[1]])
 
-            func = random.randint(1,3)
+            func = random.choice([self._swap, self._insert, self._inverse])
             candidate : List[int]; candidate_cost : int
 
 
-            if func == 1:
-                candidate, candidate_cost = self._swap(edge, x, distances)
-            elif func == 2:
-                candidate, candidate_cost = self._insert(edge, x, distances)
-            elif func == 3:
-                candidate, candidate_cost = self._inverse(edge, x, distances)
+            candidate, candidate_cost = func(edge, x, distances)
 
             if (delta := abs(candidate_cost - x_cost)) > 0:
                 self.temperatures.append (delta)
