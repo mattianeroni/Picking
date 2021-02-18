@@ -22,12 +22,7 @@ def _compute_distance (lst : List[int], distances : List[List[int]]) -> int:
     :return: The distance ran.
 
     """
-    value : int = 0
-    for i in range(len(lst) - 1):
-        value += distances[lst[i]][lst[i+1]]
-    value += distances[lst[-1]][0]
-    value += distances[0][lst[0]]
-    return value
+    return sum(distances[lst[i]][lst[i+1]] for i in range(len(lst) - 1)) + distances[lst[-1]][0] + distances[0][lst[0]]
 
 
 
