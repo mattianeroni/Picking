@@ -45,7 +45,8 @@ type AntColonyOptimization struct {
   ro, Q, a, b float64               // The parameters of the algorithm
 
   pheromone [][]float64             // The pheromone matrix
-  initialPheromon [][]float64       // The initial pheromone before starting the iterations
+  initialPheromon [][]float64       // The initial pheromone before starting the iterations and warmup
+  wuPheromone [][]float64           // The initial pheromone after the warmup
 
   best Solution                     // The best solution found
   computationalTime time.Duration   // Register the computational time
@@ -54,34 +55,88 @@ type AntColonyOptimization struct {
 }
 
 
+
 // Constructor for the ACO
 func NewACO (era int, dists[][]int, ro, Q, a, b, pherInit float64) *AntColonyOptimization {
   // Initialize the pheromone matrix and the initial pheromone matrix
   size := len(dists)
   pheromone := make([][]float64, size)
   initialPheromone := make([][]float64, size)
+  wuPheromone := make([][]float64, size)
+
   for i := 0; i < size; i++ {
     pheromone[i] = make([]float64, size)
     initialPheromone[i] = make([]float64, size)
+    wuPheromone[i] = make([]float64, size)
+
     for j := 0; j < size; j++ {
       pheromone[i][j] = pherInit
       initialPheromone[i][j] = pherInit
+      wuPheromone[i][j] = pherInit
     }
   }
 
-  return &AntColonyOptimization{era, dists, ro, Q, a, b,pheromone,initialPheromone, Solution{}, 0.0,make([]Solution, 0)}
+  return &AntColonyOptimization{era, dists, ro, Q, a, b,pheromone,
+    initialPheromone, wuPheromone, Solution{},
+    0.0,make([]Solution, 0)}
+}
+
+
+
+// This method is the warmup procedure
+func (self *AntColonyOptimization) Warmup (maxiter int) {
+  size := len(self.dists)
+
+  // At each iteration...
+  for iter := 0; iter < maxiter; iter++ {
+
+    for i := 0; i < size; i++ {
+
+      // Calculate the probability to upgrade that arc
+      var grades = make([]float64, size)
+      var totalGrade float64 = 0.0
+      for j := 0; j < size; j++ {
+        if i != j {
+          g := math.Pow(self.pheromone[i][j], self.a) * (1.0 / math.Pow(float64(self.dists[i][j]), self.b))
+          grades[j] = g
+          totalGrade += g
+        } else {
+          grades[j] = 0.0
+        }
+      }
+
+      // Update the pheromone on the arcs
+      for j := 0; j < size; j++ {
+        prob := grades[j] / totalGrade
+        update := prob * self.Q / float64(self.dists[i][j])
+        self.pheromone[i][j] += update
+        self.wuPheromone[i][j] += update
+      }
+
+    }
+  }
+}
+
+
+
+// This method restores the pheromone to the initial value.
+// If the argument <complete> is true the pheromone returns how before the warmup,
+// otherwise it returns how after the warmup.
+func (self *AntColonyOptimization) Reset (complete bool) {
+  if complete == true {
+    for i := 0; i < len(self.dists); i++ {
+      copy(self.pheromone[i], self.initialPheromon[i])
+    }
+  } else if complete == false {
+    for i := 0; i < len(self.dists); i++ {
+      copy(self.pheromone[i], self.wuPheromone[i])
+    }
+  }
 }
 
 
 
 func (self *AntColonyOptimization) Solve (problem *TSP) Solution {
-
-  // Reset the pheromone
-  self.pheromone = make([][]float64, len(self.dists))
-  for i := 0; i < len(self.dists); i++ {
-    self.pheromone[i] = make([]float64, len(self.dists))
-    copy(self.pheromone[i], self.initialPheromon[i])
-  }
 
   // Save the depot
   var depot Node = problem.nodes[0]
@@ -116,9 +171,11 @@ func (self *AntColonyOptimization) Solve (problem *TSP) Solution {
 
       // Evaporate pheromone
       self.evaporatePheromone()
+
+      self.history = append(self.history, csol)
     }
 
-    self.history = append(self.history, csol)
+
 
   }
 
@@ -202,20 +259,27 @@ func (self *AntColonyOptimization) evaporatePheromone () {
   }
 }
 
+
+
 // Expose the history of the algorithm
 func (self *AntColonyOptimization) History () []Solution {
   return self.history
 }
+
+
 
 // Expose the best solution of the algorithm
 func (self *AntColonyOptimization) Best () Solution {
   return self.best
 }
 
+
+
 // Expose the computational time of the algorithm
 func (self *AntColonyOptimization) Time () time.Duration {
   return self.computationalTime
 }
+
 
 
 // Plot the evolution of the best solution (horrible)
